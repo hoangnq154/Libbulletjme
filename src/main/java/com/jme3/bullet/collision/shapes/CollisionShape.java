@@ -599,6 +599,7 @@ abstract public class CollisionShape extends NativePhysicsObject {
     native private static boolean isConvex(long shapeId);
 
     native private static boolean isInfinite(long shapeId);
+    native private static boolean isCompound(long shapeId);
 
     native private static boolean isNonMoving(long shapeId);
 

@@ -23,6 +23,78 @@ JNIEXPORT jint JNICALL Java_com_jme3_bullet_PhysicsSpace_getWorldType
 
 /*
  * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    RFPConvexConvexTest
+ * Signature: (JJJJIILcom/jme3/math/Transform;Lcom/jme3/math/Transform;FLcom/jme3/math/Vector3f;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_jme3_bullet_PhysicsSpace_RFPConvexConvexTest
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jint, jint, jobject, jobject, jfloat, jobject);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    RFPConvexWorldTest
+ * Signature: (JJJJJIILcom/jme3/math/Transform;Lcom/jme3/math/Transform;FLcom/jme3/math/Vector3f;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_jme3_bullet_PhysicsSpace_RFPConvexWorldTest
+  (JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong, jint, jint, jobject, jobject, jfloat, jobject);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    getRecoverResultHasPenetration
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_jme3_bullet_PhysicsSpace_getRecoverResultHasPenetration
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    getRecoverResultNormal
+ * Signature: (JLcom/jme3/math/Vector3f;)V
+ */
+JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_getRecoverResultNormal
+  (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    getRecoverResultPointWorld
+ * Signature: (JLcom/jme3/math/Vector3f;)V
+ */
+JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_getRecoverResultPointWorld
+  (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    getRecoverResultPenetrationDistance
+ * Signature: (J)F
+ */
+JNIEXPORT jfloat JNICALL Java_com_jme3_bullet_PhysicsSpace_getRecoverResultPenetrationDistance
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    getRecoverResultOtherCompoundShapeIndex
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_com_jme3_bullet_PhysicsSpace_getRecoverResultOtherCompoundShapeIndex
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    getRecoverResultOtherCollisionObject
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_com_jme3_bullet_PhysicsSpace_getRecoverResultOtherCollisionObject
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    getRecoverResultLocalShapeMostRecovered
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_com_jme3_bullet_PhysicsSpace_getRecoverResultLocalShapeMostRecovered
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
  * Method:    addAction
  * Signature: (JJ)V
  */
@@ -167,6 +239,38 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_setGravity
 
 /*
  * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    aabbTest
+ * Signature: (JJIILcom/jme3/math/Vector3f;Lcom/jme3/math/Vector3f;)V
+ */
+JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_aabbTest
+  (JNIEnv *, jclass, jlong, jlong, jint, jint, jobject, jobject);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    getAABBTestResultCount
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_com_jme3_bullet_PhysicsSpace_getAABBTestResultCount
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    getAABBTestResultCollisionObject
+ * Signature: (JI)J
+ */
+JNIEXPORT jlong JNICALL Java_com_jme3_bullet_PhysicsSpace_getAABBTestResultCollisionObject
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    getAABBTestResultCompoundChildIndex
+ * Signature: (JI)I
+ */
+JNIEXPORT jint JNICALL Java_com_jme3_bullet_PhysicsSpace_getAABBTestResultCompoundChildIndex
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
  * Method:    setSolverType
  * Signature: (JI)V
  */
@@ -188,6 +292,14 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_setSpeculativeContactRe
  */
 JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_stepSimulation
   (JNIEnv *, jclass, jlong, jfloat, jint, jfloat, jboolean, jboolean, jboolean);
+
+/*
+ * Class:     com_jme3_bullet_PhysicsSpace
+ * Method:    sweepTestClosestResultCallback
+ * Signature: (JLcom/jme3/math/Transform;Lcom/jme3/math/Transform;JLcom/jme3/bullet/collision/PhysicsSweepTestResult;F)V
+ */
+JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_sweepTestClosestResultCallback
+  (JNIEnv *, jclass, jlong, jobject, jobject, jlong, jobject, jfloat);
 
 #ifdef __cplusplus
 }

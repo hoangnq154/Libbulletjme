@@ -89,6 +89,14 @@ JNIEXPORT jboolean JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_
 
 /*
  * Class:     com_jme3_bullet_collision_shapes_CollisionShape
+ * Method:    isCompound
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_isCompound
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     com_jme3_bullet_collision_shapes_CollisionShape
  * Method:    isNonMoving
  * Signature: (J)Z
  */

@@ -91,6 +91,14 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_PhysicsCollisionObject_set
 
 /*
  * Class:     com_jme3_bullet_collision_PhysicsCollisionObject
+ * Method:    checkCollideWith
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_jme3_bullet_collision_PhysicsCollisionObject_checkCollideWith
+  (JNIEnv *, jclass, jlong, jlong);
+
+/*
+ * Class:     com_jme3_bullet_collision_PhysicsCollisionObject
  * Method:    setIgnoreCollisionCheck
  * Signature: (JJZ)V
  */

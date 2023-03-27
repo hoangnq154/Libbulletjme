@@ -195,6 +195,20 @@ JNIEXPORT jboolean JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_
 
 /*
  * Class:     com_jme3_bullet_collision_shapes_CollisionShape
+ * Method:    isCompound
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_isCompound
+  (JNIEnv *pEnv, jclass, jlong shapeId){
+  const btCollisionShape * const pShape
+              = reinterpret_cast<btCollisionShape *> (shapeId);
+      NULL_CHK(pEnv, pShape, "The btCollisionShape does not exist.", JNI_FALSE);
+
+      return pShape->isCompound();
+}
+
+/*
+ * Class:     com_jme3_bullet_collision_shapes_CollisionShape
  * Method:    isNonMoving
  * Signature: (J)Z
  */

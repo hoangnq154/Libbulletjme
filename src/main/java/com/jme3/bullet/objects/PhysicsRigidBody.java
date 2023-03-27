@@ -454,6 +454,14 @@ public class PhysicsRigidBody extends PhysicsBody {
         return result;
     }
 
+    public Vector3f getVelocityInLocalPoint(Vector3f local_position){
+
+        Vector3f result = new Vector3f();
+        long objectId = nativeId();
+        getVelocityInLocalPoint(objectId,local_position, result);
+        return result;
+    }
+
     /**
      * Copy the linear velocity of this body's center of mass. The body must be
      * in dynamic mode.
@@ -1330,6 +1338,10 @@ public class PhysicsRigidBody extends PhysicsBody {
 
     native private static void
             getLinearVelocity(long objectId, Vector3f storeResult);
+    native private static void
+    getVelocityInLocalPoint(long objectId,Vector3f local_position, Vector3f storeResult);
+
+
 
     native private static void
             getLinearVelocityDp(long objectId, Vec3d storeResult);

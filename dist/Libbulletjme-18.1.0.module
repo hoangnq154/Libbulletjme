@@ -1,0 +1,60 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.github.stephengold",
+    "module": "Libbulletjme",
+    "version": "18.1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.6"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "Libbulletjme-18.1.0.jar",
+          "url": "Libbulletjme-18.1.0.jar",
+          "size": 380445,
+          "sha512": "a5b4f20fd40b2af5ff1e43fae3f46c515876ae68e4c77cb21d22c9b004f334ea59baad3e33b1090f91a1f33f0f0e2f61649a51cd3a9d9e4db9774c65110b529a",
+          "sha256": "e27d56bc837677d3ba8b38f43feece45ed8f8ef5231ea5fe846f2a1ac5309ca6",
+          "sha1": "8574266023220db8b9d4604fcbdee53b03bbfa43",
+          "md5": "b7f84c3ca1d065c3efb695637e0597ca"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "Libbulletjme-18.1.0.jar",
+          "url": "Libbulletjme-18.1.0.jar",
+          "size": 380445,
+          "sha512": "a5b4f20fd40b2af5ff1e43fae3f46c515876ae68e4c77cb21d22c9b004f334ea59baad3e33b1090f91a1f33f0f0e2f61649a51cd3a9d9e4db9774c65110b529a",
+          "sha256": "e27d56bc837677d3ba8b38f43feece45ed8f8ef5231ea5fe846f2a1ac5309ca6",
+          "sha1": "8574266023220db8b9d4604fcbdee53b03bbfa43",
+          "md5": "b7f84c3ca1d065c3efb695637e0597ca"
+        }
+      ]
+    }
+  ]
+}

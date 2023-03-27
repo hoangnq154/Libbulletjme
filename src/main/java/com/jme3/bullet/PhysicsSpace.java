@@ -31,11 +31,7 @@
  */
 package com.jme3.bullet;
 
-import com.jme3.bullet.collision.ContactListener;
-import com.jme3.bullet.collision.PersistentManifolds;
-import com.jme3.bullet.collision.PhysicsCollisionEvent;
-import com.jme3.bullet.collision.PhysicsCollisionListener;
-import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.collision.*;
 import com.jme3.bullet.joints.Constraint;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.objects.PhysicsBody;
@@ -43,6 +39,7 @@ import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.bullet.util.NativeLibrary;
+import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -760,6 +757,22 @@ public class PhysicsSpace
         setGravity(spaceId, gravity);
     }
 
+    public void aabbTest(PhysicsCollisionObject collisionObject,int collision_layer, int collision_mask, Vector3f aabb_min, Vector3f aabb_max){
+        aabbTest(nativeId(),collisionObject.nativeId(),collision_layer,collision_mask,aabb_min,aabb_max);
+    }
+
+    public int getAABBTestResultCount(){
+        return getAABBTestResultCount(nativeId());
+    }
+
+    public PhysicsCollisionObject getAABBTestResultCollisionObject(int idx){
+        return PhysicsCollisionObject.findInstance(getAABBTestResultCollisionObject(nativeId(),idx));
+    }
+
+    public int getAABBTestResultCompoundChildIndex(int idx){
+        return getAABBTestResultCompoundChildIndex(nativeId(),idx);
+    }
+
     /**
      * Alter the maximum number of simulation steps per frame.
      * <p>
@@ -1326,8 +1339,23 @@ public class PhysicsSpace
 
         removeRigidBody(spaceId, rigidBodyId);
     }
+
+
+
     // *************************************************************************
     // native private methods
+
+    native public static boolean RFPConvexConvexTest(long spaceId, long p_shapeA,long p_shapeB,long p_objectB, int p_shapeId_A, int p_shapeId_B, Transform p_transformA, Transform p_transformB, float p_recover_movement_scale, Vector3f r_delta_recover_movement);
+    native public static boolean RFPConvexWorldTest(long spaceId ,long p_shapeAId, long p_shapeBId, long p_objectAId, long p_objectBId, int p_shapeId_A, int p_shapeId_B, Transform p_transformA, Transform p_transformB,float p_recover_movement_scale, Vector3f r_delta_recover_movement);
+
+    native public static boolean getRecoverResultHasPenetration(long spaceId);
+    native public static void getRecoverResultNormal(long spaceId, Vector3f storeResult);
+    native public static void getRecoverResultPointWorld(long spaceId, Vector3f storeResult);
+    native public static float getRecoverResultPenetrationDistance(long spaceId);
+    native public static int getRecoverResultOtherCompoundShapeIndex(long spaceId);
+    native public static long getRecoverResultOtherCollisionObject(long spaceId);
+    native public static int getRecoverResultLocalShapeMostRecovered(long spaceId);
+
 
     native private static void addAction(long spaceId, long actionId);
 
@@ -1373,6 +1401,12 @@ public class PhysicsSpace
 
     native private static void setGravity(long spaceId, Vector3f gravityVector);
 
+    native private static void aabbTest(long spaceId, long collisionObjectID,int collision_layer, int collision_mask, Vector3f aabb_min, Vector3f aabb_max);
+
+    native private static int getAABBTestResultCount(long spaceId);
+    native private static long getAABBTestResultCollisionObject(long spaceId, int index);
+    native private static int getAABBTestResultCompoundChildIndex(long spaceId, int index);
+
     native private static void setSolverType(long spaceId, int solverType);
 
     native private static void
@@ -1382,4 +1416,9 @@ public class PhysicsSpace
             int maxSubSteps, float accuracy, boolean enableContactEndedCallback,
             boolean enableContactProcessedCallback,
             boolean enableContactStartedCallback);
+
+
+    native private static void sweepTestClosestResultCallback(long shapeId, Transform from,
+                                                              Transform to, long spaceId, PhysicsSweepTestResult result,
+                                                              float allowedCcdPenetration);
 }

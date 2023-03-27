@@ -213,6 +213,14 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_objects_PhysicsRigidBody_getLinearVe
 
 /*
  * Class:     com_jme3_bullet_objects_PhysicsRigidBody
+ * Method:    getVelocityInLocalPoint
+ * Signature: (JLcom/jme3/math/Vector3f;Lcom/jme3/math/Vector3f;)V
+ */
+JNIEXPORT void JNICALL Java_com_jme3_bullet_objects_PhysicsRigidBody_getVelocityInLocalPoint
+  (JNIEnv *, jclass, jlong, jobject, jobject);
+
+/*
+ * Class:     com_jme3_bullet_objects_PhysicsRigidBody
  * Method:    getLinearVelocityDp
  * Signature: (JLcom/simsilica/mathd/Vec3d;)V
  */

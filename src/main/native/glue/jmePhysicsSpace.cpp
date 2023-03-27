@@ -71,6 +71,32 @@ void jmePhysicsSpace::createMultiThreadedSpace(const btVector3& min,
 
 #else // BT_THREADSAFE
 
+
+/// This class is required to implement custom collision behaviour in the narrowphase
+class GodotCollisionDispatcher : public btCollisionDispatcher {
+private:
+	static const int CASTED_TYPE_AREA;
+
+public:
+	GodotCollisionDispatcher(btCollisionConfiguration *collisionConfiguration);
+	virtual bool needsCollision(const btCollisionObject *body0, const btCollisionObject *body1){
+        if (body0->getUserIndex() == CASTED_TYPE_AREA || body1->getUserIndex() == CASTED_TYPE_AREA) {
+                // Avoide area narrow phase
+                return false;
+            }
+            return btCollisionDispatcher::needsCollision(body0, body1);
+	}
+	virtual bool needsResponse(const btCollisionObject *body0, const btCollisionObject *body1){
+	    if (body0->getUserIndex() == CASTED_TYPE_AREA || body1->getUserIndex() == CASTED_TYPE_AREA) {
+        		// Avoide area narrow phase
+        		return false;
+        	}
+        	return btCollisionDispatcher::needsResponse(body0, body1);
+
+	}
+};
+
+
 void jmePhysicsSpace::createPhysicsSpace(const btVector3& min,
         const btVector3& max, int broadphaseId) {
     // Create the pair cache for broadphase collision detection.

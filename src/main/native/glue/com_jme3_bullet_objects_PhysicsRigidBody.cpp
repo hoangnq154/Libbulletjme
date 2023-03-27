@@ -389,6 +389,26 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_objects_PhysicsRigidBody_getLinearVe
 
 /*
  * Class:     com_jme3_bullet_objects_PhysicsRigidBody
+ * Method:    getVelocityInLocalPoint
+ * Signature: (JLcom/jme3/math/Vector3f;Lcom/jme3/math/Vector3f;)V
+ */
+JNIEXPORT void JNICALL Java_com_jme3_bullet_objects_PhysicsRigidBody_getVelocityInLocalPoint
+  (JNIEnv *pEnv, jclass, jlong bodyId, jobject local_position, jobject storeVector){
+
+const btRigidBody * const pBody = reinterpret_cast<btRigidBody *> (bodyId);
+  NULL_CHK(pEnv, pBody, "The btRigidBody does not exist.",)
+
+      NULL_CHK(pEnv, storeVector, "The store vector does not exist.",)
+
+      btVector3 local;
+      jmeBulletUtil::convert(pEnv, local_position,&local);
+      jmeBulletUtil::convert(pEnv, &pBody->getVelocityInLocalPoint(local), storeVector);
+
+  }
+
+
+/*
+ * Class:     com_jme3_bullet_objects_PhysicsRigidBody
  * Method:    getLinearVelocityDp
  * Signature: (JLcom/simsilica/mathd/Vec3d;)V
  */

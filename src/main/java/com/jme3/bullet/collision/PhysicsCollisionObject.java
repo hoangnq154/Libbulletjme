@@ -1214,6 +1214,16 @@ abstract public class PhysicsCollisionObject extends NativePhysicsObject {
         this.userObject = user;
     }
 
+    public boolean checkCollideWith(PhysicsCollisionObject otherObject)
+    {
+        return checkCollideWith(nativeId(),otherObject.nativeId());
+    }
+
+    public boolean isStaticOrKinematicObject(){
+        int flag = getCollisionFlags(nativeId());
+        return (flag & (CollisionFlag.KINEMATIC_OBJECT | CollisionFlag.STATIC_OBJECT)) != 0;
+    }
+
     /**
      * Return the ID of the space where this object is added.
      *
@@ -1290,6 +1300,8 @@ abstract public class PhysicsCollisionObject extends NativePhysicsObject {
      */
     native protected static void
             setCollisionFlags(long objectId, int desiredFlags);
+
+    native protected static boolean checkCollideWith(long objectId, long otherObjectId);
 
     /**
      * Alter the ignore list for collisions. TODO privatize

@@ -166,6 +166,23 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_PhysicsCollisionObject_set
 
 /*
  * Class:     com_jme3_bullet_collision_PhysicsCollisionObject
+ * Method:    checkCollideWith
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_jme3_bullet_collision_PhysicsCollisionObject_checkCollideWith
+  (JNIEnv *pEnv, jclass, jlong pcoId, jlong other_pcoId){
+  btCollisionObject * const
+              pCollisionObject = reinterpret_cast<btCollisionObject *> (pcoId);
+      NULL_CHK(pEnv, pCollisionObject, "The btCollisionObject does not exist.",JNI_FALSE)
+
+      btCollisionObject * const
+                  pOther_CollisionObject = reinterpret_cast<btCollisionObject *> (other_pcoId);
+          NULL_CHK(pEnv, pOther_CollisionObject, "The pOther_CollisionObject does not exist.",JNI_FALSE)
+      return pCollisionObject->checkCollideWith(pOther_CollisionObject);
+  }
+
+/*
+ * Class:     com_jme3_bullet_collision_PhysicsCollisionObject
  * Method:    setIgnoreCollisionCheck
  * Signature: (JJZ)V
  */
