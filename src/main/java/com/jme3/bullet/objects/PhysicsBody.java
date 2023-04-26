@@ -183,6 +183,9 @@ abstract public class PhysicsBody extends PhysicsCollisionObject {
      */
     abstract public void setMass(float mass);
 
+    abstract public void setMassProps(float mass, Vector3f localInertia);
+    abstract public void setCollisionFlags(int flags);
+
     /**
      * Directly relocate this body's center.
      *

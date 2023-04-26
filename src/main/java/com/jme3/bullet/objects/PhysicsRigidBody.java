@@ -480,6 +480,7 @@ public class PhysicsRigidBody extends PhysicsBody {
         return result;
     }
 
+
     /**
      * Access this body's motion state.
      *
@@ -789,6 +790,10 @@ public class PhysicsRigidBody extends PhysicsBody {
         }
     }
 
+    public void forceActivationState(int activation){
+        setActivationState(nativeId(),activation);
+    }
+
     /**
      * Alter this body's gravitational acceleration.
      * <p>
@@ -1008,12 +1013,12 @@ public class PhysicsRigidBody extends PhysicsBody {
      * no negative component, unaffected, default=(1,1,1))
      */
     public void setPhysicsScale(Vector3f newScale) {
-        CollisionShape shape = getCollisionShape();
-        Vector3f oldScale = shape.getScale(null); // TODO garbage
-        if (MyVector3f.ne(oldScale, newScale)) {
-            shape.setScale(newScale);
-            setCollisionShape(shape);
-        }
+//        CollisionShape shape = getCollisionShape();
+//        Vector3f oldScale = shape.getScale(null); // TODO garbage
+//        if (MyVector3f.ne(oldScale, newScale)) {
+//            shape.setScale(newScale);
+//            setCollisionShape(shape);
+//        }
     }
 
     /**
@@ -1217,6 +1222,21 @@ public class PhysicsRigidBody extends PhysicsBody {
             flags &= ~CollisionFlag.STATIC_OBJECT;
         }
         setCollisionFlags(objectId, flags);
+    }
+
+    @Override
+    public void setMassProps(float mass, Vector3f localInertia) {
+        this.mass = mass;
+        setMassProps(nativeId(),mass,localInertia);
+    }
+
+    public void updateInertiaTensor(){
+        updateInertiaTensor(nativeId());
+    }
+
+    @Override
+    public void setCollisionFlags(int flags) {
+        setCollisionFlags(nativeId(), flags);
     }
 
     /**

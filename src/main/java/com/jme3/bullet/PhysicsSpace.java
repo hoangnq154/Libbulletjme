@@ -32,6 +32,7 @@
 package com.jme3.bullet;
 
 import com.jme3.bullet.collision.*;
+import com.jme3.bullet.collision.shapes.ConvexShape;
 import com.jme3.bullet.joints.Constraint;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.objects.PhysicsBody;
@@ -41,12 +42,8 @@ import com.jme3.bullet.objects.PhysicsVehicle;
 import com.jme3.bullet.util.NativeLibrary;
 import com.jme3.math.Transform;
 import com.jme3.math.Vector3f;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.Map;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -222,7 +219,7 @@ public class PhysicsSpace
      * @param broadphaseType which broadphase accelerator to use (not null)
      */
     public PhysicsSpace(Vector3f worldMin, Vector3f worldMax,
-            BroadphaseType broadphaseType) {
+                        BroadphaseType broadphaseType) {
         super(worldMin, worldMax, broadphaseType, NativeLibrary.countThreads());
     }
 
@@ -240,7 +237,7 @@ public class PhysicsSpace
      * (&ge;1, &le;64, default=numThreads)
      */
     public PhysicsSpace(Vector3f worldMin, Vector3f worldMax,
-            BroadphaseType broadphaseType, int numSolvers) {
+                        BroadphaseType broadphaseType, int numSolvers) {
         super(worldMin, worldMax, broadphaseType, numSolvers);
     }
 
@@ -256,7 +253,7 @@ public class PhysicsSpace
      * @param solverType the desired contact-and-constraint solver (not null)
      */
     public PhysicsSpace(Vector3f worldMin, Vector3f worldMax,
-            BroadphaseType broadphaseType, SolverType solverType) {
+                        BroadphaseType broadphaseType, SolverType solverType) {
         super(worldMin, worldMax, broadphaseType);
         Validate.nonNull(solverType, "solver type");
 
@@ -856,13 +853,13 @@ public class PhysicsSpace
      * false to skip them
      */
     public void update(float timeInterval, int maxSteps, boolean doEnded,
-            boolean doProcessed, boolean doStarted) {
-        assert Validate.nonNegative(timeInterval, "time interval");
-        assert Validate.nonNegative(maxSteps, "max steps");
+                       boolean doProcessed, boolean doStarted) {
+//        assert Validate.nonNegative(timeInterval, "time interval");
+//        assert Validate.nonNegative(maxSteps, "max steps");
 
-        if (NativeLibrary.jniEnvId() != jniEnvId()) {
-            logger.log(Level.WARNING, "invoked from wrong thread");
-        }
+//        if (NativeLibrary.jniEnvId() != jniEnvId()) {
+//            logger.log(Level.WARNING, "invoked from wrong thread");
+//        }
 
         long spaceId = nativeId();
         assert accuracy > 0f : accuracy;
@@ -934,6 +931,17 @@ public class PhysicsSpace
             addJoint((PhysicsJoint) object);
         } else {
             super.add(object);
+        }
+    }
+
+    public void addCollisionObject(PhysicsCollisionObject pco, int collision_layer, int collision_mask){
+        Validate.nonNull(pco, "collision object");
+        if (pco instanceof PhysicsRigidBody) {
+            addRigidBody((PhysicsRigidBody) pco,collision_layer,collision_mask);
+        } else if (pco instanceof PhysicsCharacter) {
+            addCharacter((PhysicsCharacter) pco);
+        } else {
+            super.addCollisionObject(pco);
         }
     }
 
@@ -1105,7 +1113,7 @@ public class PhysicsSpace
      */
     @Override
     public void onContactProcessed(PhysicsCollisionObject pcoA,
-            PhysicsCollisionObject pcoB, long pointId) {
+                                   PhysicsCollisionObject pcoB, long pointId) {
         assert NativeLibrary.jniEnvId() == jniEnvId() : "wrong thread";
 
         PhysicsCollisionEvent event
@@ -1176,6 +1184,43 @@ public class PhysicsSpace
 
         long actionId = character.getControllerId();
         addAction(spaceId, actionId);
+    }
+
+    private void addRigidBody(PhysicsRigidBody rigidBody, int layer, int mask){
+        if (contains(rigidBody)) {
+            logger.log(Level.WARNING, "{0} is already added to {1}.",
+                    new Object[]{rigidBody, this});
+            return;
+        }
+        assert !rigidBody.isInWorld();
+
+        if (logger.isLoggable(Level.FINE)) {
+            logger.log(Level.FINE, "Adding {0} to {1}.",
+                    new Object[]{rigidBody, this});
+        }
+        long rigidBodyId = rigidBody.nativeId();
+        rigidMap.put(rigidBodyId, rigidBody);
+        /*
+         * Workaround:
+         * It seems that adding a Kinematic RigidBody to the dynamicWorld
+         * prevents it from being dynamic again afterward.
+         * So we add it dynamic, then set it kinematic.
+         */
+        boolean kinematic = false;
+        if (rigidBody.isKinematic()) {
+            kinematic = true;
+            rigidBody.setKinematic(false);
+        }
+
+        boolean useStaticGroup = rigidBody.isStatic();
+//        int proxyGroup = useStaticGroup ? 2 : 1;
+//        int proxyMask = useStaticGroup ? -3 : -1;
+        long spaceId = nativeId();
+        addRigidBody(spaceId, rigidBodyId, layer, mask);
+
+        if (kinematic) {
+            rigidBody.setKinematic(true);
+        }
     }
 
     /**
@@ -1340,6 +1385,18 @@ public class PhysicsSpace
         removeRigidBody(spaceId, rigidBodyId);
     }
 
+    public List<PhysicsSweepTestResult> sweepTestClosestResultCallback(PhysicsCollisionObject body,ConvexShape shape, Transform start, Transform end,int m_collisionFilterGroup, int m_collisionFilterMask,
+                                               List<PhysicsSweepTestResult> results, float allowedCcdPenetration){
+        long shapeId = shape.nativeId();
+        long spaceId = nativeId();
+        long bodyId = body.nativeId();
+        results.clear();
+        sweepTestClosestResultCallback(spaceId,bodyId,
+                shapeId, start, end,m_collisionFilterGroup,m_collisionFilterMask , results, allowedCcdPenetration);
+
+        return results;
+    }
+
 
 
     // *************************************************************************
@@ -1360,7 +1417,7 @@ public class PhysicsSpace
     native private static void addAction(long spaceId, long actionId);
 
     native private static void
-            addCharacterObject(long spaceId, long characterId);
+    addCharacterObject(long spaceId, long characterId);
 
     native private static void addConstraintC(
             long spaceId, long constraintId, boolean disableCollisions);
@@ -1371,12 +1428,12 @@ public class PhysicsSpace
     native private static int countManifolds(long spaceId);
 
     native private long createPhysicsSpace(Vector3f minVector,
-            Vector3f maxVector, int broadphaseType, int numSolvers);
+                                           Vector3f maxVector, int broadphaseType, int numSolvers);
 
     native private static void getGravity(long spaceId, Vector3f storeVector);
 
     native private static long
-            getManifoldByIndex(long spaceId, int manifoldIndex);
+    getManifoldByIndex(long spaceId, int manifoldIndex);
 
     native private static int getNumConstraints(long spaceId);
 
@@ -1389,15 +1446,15 @@ public class PhysicsSpace
     native private static void removeAction(long spaceId, long actionId);
 
     native private static void
-            removeCharacterObject(long spaceId, long characterId);
+    removeCharacterObject(long spaceId, long characterId);
 
     native private static void
-            removeConstraint(long spaceId, long constraintId);
+    removeConstraint(long spaceId, long constraintId);
 
     native private static void removeRigidBody(long spaceId, long rigidBodyId);
 
     native private static void
-            setCcdWithStaticOnly(long spaceId, boolean setting);
+    setCcdWithStaticOnly(long spaceId, boolean setting);
 
     native private static void setGravity(long spaceId, Vector3f gravityVector);
 
@@ -1410,15 +1467,15 @@ public class PhysicsSpace
     native private static void setSolverType(long spaceId, int solverType);
 
     native private static void
-            setSpeculativeContactRestitution(long spaceId, boolean apply);
+    setSpeculativeContactRestitution(long spaceId, boolean apply);
 
     native private static void stepSimulation(long spaceId, float timeInterval,
-            int maxSubSteps, float accuracy, boolean enableContactEndedCallback,
-            boolean enableContactProcessedCallback,
-            boolean enableContactStartedCallback);
+                                              int maxSubSteps, float accuracy, boolean enableContactEndedCallback,
+                                              boolean enableContactProcessedCallback,
+                                              boolean enableContactStartedCallback);
 
 
-    native private static void sweepTestClosestResultCallback(long shapeId, Transform from,
-                                                              Transform to, long spaceId, PhysicsSweepTestResult result,
+    native private static void sweepTestClosestResultCallback(long spaceId,long bodyId, long shapeId, Transform from,
+                                                              Transform to, int m_collisionFilterGroup, int m_collisionFilterMask, List<PhysicsSweepTestResult> results,
                                                               float allowedCcdPenetration);
 }

@@ -166,6 +166,42 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_PhysicsCollisionObject_set
 
 /*
  * Class:     com_jme3_bullet_collision_PhysicsCollisionObject
+ * Method:    updateInertiaTensor
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_PhysicsCollisionObject_updateInertiaTensor
+  (JNIEnv *pEnv, jclass, jlong pcoId) {
+
+      btCollisionObject * const
+              pCollisionObject = reinterpret_cast<btCollisionObject *> (pcoId);
+      NULL_CHK(pEnv, pCollisionObject, "The btCollisionObject does not exist.",)
+
+     ((btRigidBody*)pCollisionObject)->updateInertiaTensor();
+
+  }
+
+/*
+ * Class:     com_jme3_bullet_collision_PhysicsCollisionObject
+ * Method:    setMassProps
+ * Signature: (JFLcom/jme3/math/Vector3f;)V
+ */
+JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_PhysicsCollisionObject_setMassProps
+  (JNIEnv *pEnv, jclass, jlong pcoId, jfloat p_mass, jobject localInertiaJ) {
+
+        btCollisionObject * const
+                pCollisionObject = reinterpret_cast<btCollisionObject *> (pcoId);
+        NULL_CHK(pEnv, pCollisionObject, "The btCollisionObject does not exist.",)
+        btVector3 localInertia;
+        jmeBulletUtil::convert(pEnv,localInertiaJ,&localInertia);
+        ((btRigidBody*)pCollisionObject)->setMassProps(p_mass,localInertia);
+
+  }
+
+
+
+
+/*
+ * Class:     com_jme3_bullet_collision_PhysicsCollisionObject
  * Method:    checkCollideWith
  * Signature: (JJ)Z
  */

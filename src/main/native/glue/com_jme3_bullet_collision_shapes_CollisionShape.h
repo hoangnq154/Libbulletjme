@@ -33,6 +33,14 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_getA
 
 /*
  * Class:     com_jme3_bullet_collision_shapes_CollisionShape
+ * Method:    getBoundingSphere
+ * Signature: (JLcom/jme3/math/Vector3f;)F
+ */
+JNIEXPORT jfloat JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_getBoundingSphere
+  (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     com_jme3_bullet_collision_shapes_CollisionShape
  * Method:    getLocalScaling
  * Signature: (JLcom/jme3/math/Vector3f;)V
  */
@@ -134,6 +142,14 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_setL
  */
 JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_setMargin
   (JNIEnv *, jclass, jlong, jfloat);
+
+/*
+ * Class:     com_jme3_bullet_collision_shapes_CollisionShape
+ * Method:    calculateLocalInertia
+ * Signature: (JFLcom/jme3/math/Vector3f;)V
+ */
+JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_calculateLocalInertia
+  (JNIEnv *, jclass, jlong, jfloat, jobject);
 
 #ifdef __cplusplus
 }

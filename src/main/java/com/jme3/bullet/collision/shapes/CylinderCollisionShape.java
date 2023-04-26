@@ -226,11 +226,11 @@ public class CylinderCollisionShape extends ConvexShape {
         boolean canScale = super.canScale(scale);
         if (canScale) {
             if (axis == PhysicsSpace.AXIS_X && scale.y != scale.z) {
-                canScale = false;
+//                canScale = false;
             } else if (axis == PhysicsSpace.AXIS_Y && scale.x != scale.z) {
-                canScale = false;
+//                canScale = false;
             } else if (axis == PhysicsSpace.AXIS_Z && scale.x != scale.y) {
-                canScale = false;
+//                canScale = false;
             }
         }
 

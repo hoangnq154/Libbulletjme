@@ -152,6 +152,10 @@ abstract public class CollisionShape extends NativePhysicsObject {
         return result;
     }
 
+    public float boundingSphere(Vector3f centerStore){
+        return  getBoundingSphere(nativeId(),centerStore);
+    }
+
     /**
      * Calculate an axis-aligned bounding box for this shape with the specified
      * translation and rotation applied to it. Rotation is applied first.
@@ -490,6 +494,11 @@ abstract public class CollisionShape extends NativePhysicsObject {
             throw new IllegalArgumentException("this = " + this);
         }
     }
+
+    public void calculateLocalInertia(float p_mass, Vector3f localInertiaStore){
+        calculateLocalInertia(nativeId(),p_mass,localInertiaStore);
+    }
+
     // *************************************************************************
     // new protected methods
 
@@ -584,6 +593,8 @@ abstract public class CollisionShape extends NativePhysicsObject {
     native private static void getAabb(long shapeId, Vector3f location,
             Matrix3f basisMatrix, Vector3f storeMinima, Vector3f storeMaxima);
 
+    native private static float getBoundingSphere(long shapeId, Vector3f center);
+
     native private static void
             getLocalScaling(long shapeId, Vector3f storeVector);
 
@@ -611,4 +622,6 @@ abstract public class CollisionShape extends NativePhysicsObject {
     native private static void setLocalScaling(long shapeId, Vector3f scale);
 
     native private static void setMargin(long shapeId, float margin);
+
+    native private static void calculateLocalInertia(long shapeId, float mass, Vector3f localInertia);
 }

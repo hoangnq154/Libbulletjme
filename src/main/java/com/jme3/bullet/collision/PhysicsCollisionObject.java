@@ -1301,6 +1301,9 @@ abstract public class PhysicsCollisionObject extends NativePhysicsObject {
     native protected static void
             setCollisionFlags(long objectId, int desiredFlags);
 
+    native protected static void updateInertiaTensor(long obbjectId);
+    native protected static void setMassProps(long obbjectId,float mass,Vector3f localInertia);
+
     native protected static boolean checkCollideWith(long objectId, long otherObjectId);
 
     /**

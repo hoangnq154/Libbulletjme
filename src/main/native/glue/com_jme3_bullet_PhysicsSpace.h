@@ -296,10 +296,10 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_stepSimulation
 /*
  * Class:     com_jme3_bullet_PhysicsSpace
  * Method:    sweepTestClosestResultCallback
- * Signature: (JLcom/jme3/math/Transform;Lcom/jme3/math/Transform;JLcom/jme3/bullet/collision/PhysicsSweepTestResult;F)V
+ * Signature: (JJJLcom/jme3/math/Transform;Lcom/jme3/math/Transform;IILjava/util/List;F)V
  */
 JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_sweepTestClosestResultCallback
-  (JNIEnv *, jclass, jlong, jobject, jobject, jlong, jobject, jfloat);
+  (JNIEnv *, jclass, jlong, jlong, jlong, jobject, jobject, jint, jint, jobject, jfloat);
 
 #ifdef __cplusplus
 }

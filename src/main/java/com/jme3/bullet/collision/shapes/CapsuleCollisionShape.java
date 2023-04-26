@@ -174,7 +174,7 @@ public class CapsuleCollisionShape extends ConvexShape {
     @Override
     public boolean canScale(Vector3f scale) {
         boolean canScale
-                = super.canScale(scale) && MyVector3f.isScaleUniform(scale);
+                = super.canScale(scale) ;
         return canScale;
     }
 

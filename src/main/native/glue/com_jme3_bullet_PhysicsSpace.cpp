@@ -967,13 +967,15 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_stepSimulation
 
 struct GodotKinClosestConvexResultCallback : public btCollisionWorld::ClosestConvexResultCallback {
 public:
-	//const BulletRigidBody3D *m_self_object;
+	const btCollisionObject *m_self_object;
 	//const VSet<RID> *m_exclude;
 	const bool m_infinite_inertia = false;
+	JNIEnv *m_pEnv;
+    jobject m_resultList;
 
-	GodotKinClosestConvexResultCallback(const btVector3 &convexFromWorld, const btVector3 &convexToWorld, bool p_infinite_inertia) :
+	GodotKinClosestConvexResultCallback(const btVector3 &convexFromWorld, const btVector3 &convexToWorld, bool p_infinite_inertia,JNIEnv *Env,jobject r,btCollisionObject *self) :
 			btCollisionWorld::ClosestConvexResultCallback(convexFromWorld, convexToWorld),
-			m_infinite_inertia(p_infinite_inertia) {}
+			m_infinite_inertia(p_infinite_inertia), m_pEnv(Env), m_resultList(r),m_self_object(self) {}
 
 	virtual bool needsCollision(btBroadphaseProxy *proxy0) const{
 	    const bool needs = GodotFilterCallback::test_collision_filters(m_collisionFilterGroup, m_collisionFilterMask, proxy0->m_collisionFilterGroup, proxy0->m_collisionFilterMask);
@@ -981,8 +983,9 @@ public:
         		btCollisionObject *btObj = static_cast<btCollisionObject *>(proxy0->m_clientObject);
         		//BulletCollisionObject3D *gObj = static_cast<BulletCollisionObject3D *>(btObj->getUserPointer());
 
-//        		if (gObj == m_self_object) {
-//        			return false;
+        		if (btObj == m_self_object) {
+        			return false;
+        		}
 //        		} else {
 //        			// A kinematic body can't be stopped by a rigid body since the mass of kinematic body is infinite
 //        			if (m_infinite_inertia && !btObj->isStaticOrKinematicObject()) {
@@ -1006,6 +1009,29 @@ public:
         		return false;
         	}
 	}
+
+	virtual btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
+    {
+    	btCollisionWorld::ClosestConvexResultCallback::addSingleResult(convexResult,normalInWorldSpace);
+
+    	/*
+         * If the shape of the hit collision object is compound or concave,
+         *  LocalShapeInfo indicates where it was hit.
+         */
+        int partIndex = -1;
+        int triangleIndex = -1;
+        btCollisionWorld::LocalShapeInfo *pLsi
+                = convexResult.m_localShapeInfo;
+        if (pLsi != NULL) {
+            partIndex = pLsi->m_shapePart;
+            triangleIndex = pLsi->m_triangleIndex;
+        }
+    	jmeBulletUtil::addSweepTestResult(m_pEnv, m_resultList,
+                        &m_hitNormalWorld, convexResult.m_hitFraction,
+                        convexResult.m_hitCollisionObject, partIndex,
+                        triangleIndex);
+        return (btScalar) 1;
+    }
 };
 
 /*
@@ -1014,8 +1040,27 @@ public:
  * Signature: (JLcom/jme3/math/Transform;Lcom/jme3/math/Transform;JLcom/jme3/bullet/collision/PhysicsSweepTestResult;F)V
  */
 JNIEXPORT void JNICALL Java_com_jme3_bullet_PhysicsSpace_sweepTestClosestResultCallback
-  (JNIEnv *pEnv, jclass, jlong shapeId, jobject from, jobject to, jlong spaceId,
-           jobject result, jfloat allowedCcdPenetration){
+  (JNIEnv *pEnv, jclass, jlong spaceId,jlong bodyId, jlong shapeId, jobject from, jobject to, jint m_collisionFilterGroup, jint m_collisionFilterMask, jobject results, jfloat allowedCcdPenetration){
 
+        btVector3 inScale;
+        btTransform shape_world_from , shape_world_to;
+            jmeBulletUtil::convert(pEnv, from, &shape_world_from,&inScale);
+            jmeBulletUtil::convert(pEnv, to, &shape_world_to,&inScale);
+
+        const btConvexShape * const
+                    pConvexShape = reinterpret_cast<btConvexShape *> (shapeId);
+        btCollisionObject *m_self_object = reinterpret_cast<btCollisionObject *> (bodyId);
+
+        GodotKinClosestConvexResultCallback btResult(shape_world_from.getOrigin(), shape_world_to.getOrigin(), false,pEnv,results,m_self_object);
+        			btResult.m_collisionFilterGroup = m_collisionFilterGroup;
+        			btResult.m_collisionFilterMask = m_collisionFilterMask;
+
+            jmePhysicsSpace * const
+                    pSpace = reinterpret_cast<jmePhysicsSpace *> (spaceId);
+            NULL_CHK(pEnv, pSpace, "The physics space does not exist.",);
+            btDiscreteDynamicsWorld * const pWorld = pSpace->getDynamicsWorld();
+            NULL_CHK(pEnv, pWorld, "The physics world does not exist.",);
+
+         pWorld->convexSweepTest(pConvexShape, shape_world_from, shape_world_to, btResult,allowedCcdPenetration);
 
  }

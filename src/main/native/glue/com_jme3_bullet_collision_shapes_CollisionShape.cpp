@@ -79,6 +79,24 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_getA
 
 /*
  * Class:     com_jme3_bullet_collision_shapes_CollisionShape
+ * Method:    getBoundingSphere
+ * Signature: (JLcom/jme3/math/Vector3f;)F
+ */
+JNIEXPORT jfloat JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_getBoundingSphere
+  (JNIEnv *pEnv, jclass, jlong shapeId, jobject centerStore){
+            const btCollisionShape * const pShape
+                    = reinterpret_cast<btCollisionShape *> (shapeId);
+//            NULL_CHK(pEnv, pShape, "The btCollisionShape does not exist.",);
+            btVector3 center;
+            btScalar radius(1.0);
+
+        pShape->getBoundingSphere(center,radius);
+        jmeBulletUtil::convert(pEnv, &center, centerStore);
+        return (jfloat)radius;
+ }
+
+/*
+ * Class:     com_jme3_bullet_collision_shapes_CollisionShape
  * Method:    getLocalScaling
  * Signature: (JLcom/jme3/math/Vector3f;)V
  */
@@ -282,3 +300,17 @@ JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_setM
 
     pShape->setMargin(newMargin);
 }
+
+
+JNIEXPORT void JNICALL Java_com_jme3_bullet_collision_shapes_CollisionShape_calculateLocalInertia
+  (JNIEnv *pEnv, jclass, jlong shapeId, jfloat p_mass, jobject localInertiaStore){
+
+    btCollisionShape * const pShape
+                = reinterpret_cast<btCollisionShape *> (shapeId);
+        NULL_CHK(pEnv, pShape, "The btCollisionShape does not exist.",);
+
+    btVector3 localInertia;
+    pShape->calculateLocalInertia(p_mass,localInertia);
+    jmeBulletUtil::convert(pEnv, localInertiaStore, &localInertia);
+
+  }

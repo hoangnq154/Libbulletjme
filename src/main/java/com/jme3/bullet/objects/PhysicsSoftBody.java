@@ -1611,6 +1611,16 @@ public class PhysicsSoftBody extends PhysicsBody {
         setMassByCurrent(totalMass);
     }
 
+    @Override
+    public void setMassProps(float mass, Vector3f localInertia) {
+
+    }
+
+    @Override
+    public void setCollisionFlags(int flags) {
+
+    }
+
     /**
      * Directly relocate the center of this body's bounding box.
      *
